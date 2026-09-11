@@ -1,9 +1,5 @@
 import { type H3Event, readMultipartFormData } from 'h3'
-import {
-  COVER_ALLOWED_TYPES,
-  COVER_MAX_BYTES,
-  type ProjectFormValues
-} from '#shared/types/project'
+import { COVER_ALLOWED_TYPES, COVER_MAX_BYTES, type ProjectFormValues } from '#shared/types/project'
 import { badRequest, payloadTooLarge, unsupportedMediaType } from './api-error'
 
 export interface CoverUpload {
