@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { defineEventHandler, setResponseStatus } from 'h3'
-import type { Project } from '../../../shared/types/project'
+import type { Project } from '#shared/types/project'
 import { insertProject } from '../../database/projects'
 import { internalError, isApiError } from '../../utils/api-error'
 import { removeCover, type StoredCover, uploadCover } from '../../utils/cover-storage'

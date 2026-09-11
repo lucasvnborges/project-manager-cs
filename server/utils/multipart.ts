@@ -3,7 +3,7 @@ import {
   COVER_ALLOWED_TYPES,
   COVER_MAX_BYTES,
   type ProjectFormValues
-} from '../../shared/types/project'
+} from '#shared/types/project'
 import { badRequest, payloadTooLarge, unsupportedMediaType } from './api-error'
 
 export interface CoverUpload {

@@ -1,5 +1,5 @@
 import { defineEventHandler, getRouterParam } from 'h3'
-import type { Project } from '../../../shared/types/project'
+import type { Project } from '#shared/types/project'
 import { findProject, updateProject } from '../../database/projects'
 import { internalError, isApiError, notFound } from '../../utils/api-error'
 import { removeCover, type StoredCover, uploadCover } from '../../utils/cover-storage'

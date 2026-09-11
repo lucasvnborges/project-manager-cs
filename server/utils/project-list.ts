@@ -1,4 +1,4 @@
-import type { Project, ProjectSort } from '../../shared/types/project'
+import type { Project, ProjectSort } from '#shared/types/project'
 
 const collator = new Intl.Collator('pt-BR', { sensitivity: 'base' })
 

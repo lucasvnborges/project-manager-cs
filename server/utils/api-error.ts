@@ -1,5 +1,5 @@
 import { createError, H3Error } from 'h3'
-import type { ApiErrorBody } from '../../shared/types/project'
+import type { ApiErrorBody } from '#shared/types/project'
 
 type FieldErrors = ApiErrorBody['fieldErrors']
 

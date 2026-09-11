@@ -1,6 +1,6 @@
 import { defineEventHandler } from 'h3'
-import type { ProjectListResponse } from '../../../shared/types/project'
-import { todayCivilDate } from '../../../shared/validation/project'
+import type { ProjectListResponse } from '#shared/types/project'
+import { todayCivilDate } from '#shared/validation/project'
 import { listProjects } from '../../database/projects'
 import { internalError, isApiError } from '../../utils/api-error'
 import { buildProjectList } from '../../utils/project-list'

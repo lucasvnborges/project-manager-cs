@@ -1,5 +1,5 @@
 import { defineEventHandler, getRouterParam, readBody } from 'h3'
-import type { Project } from '../../../../shared/types/project'
+import type { Project } from '#shared/types/project'
 import { updateProject } from '../../../database/projects'
 import { internalError, isApiError, notFound } from '../../../utils/api-error'
 import {

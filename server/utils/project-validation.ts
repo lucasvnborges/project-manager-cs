@@ -6,13 +6,13 @@ import {
   type ProjectListQuery,
   type ProjectSort,
   SEARCH_MIN_LENGTH
-} from '../../shared/types/project'
+} from '#shared/types/project'
 import {
   hasErrors,
   normalizeText,
   type ProjectValidationContext,
   validateProject
-} from '../../shared/validation/project'
+} from '#shared/validation/project'
 import type { ProjectRow } from '../database/schema'
 import { badRequest } from './api-error'
 
