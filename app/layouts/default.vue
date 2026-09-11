@@ -17,6 +17,7 @@ watch(isSearchPage, (onSearchPage) => {
       v-if="showSearchBar"
       :initial-query="currentQuery"
       :autofocus="searchOpen"
+      :enable-history="searchOpen"
       @close="searchOpen = false"
     />
     <AppHeader v-else @open-search="searchOpen = true" />
