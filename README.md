@@ -52,9 +52,33 @@ npm run db:migrate
 
 O banco começa vazio. Não há seed automático. Para desenvolvimento, crie projetos pela interface.
 
-## Desenvolvimento
+## Desenvolvimento com Docker
 
-Com Node 24 e o `.env` preenchido:
+O Compose sobe o Nuxt com hot reload e um Postgres 16 local. Capas ficam em disco (`COVER_STORAGE=fs`), então Neon e Blob não são necessários neste modo.
+
+```bash
+docker compose up --build
+```
+
+A aplicação fica em `http://localhost:3000`. A migration roda na subida do container.
+
+Parar:
+
+```bash
+docker compose down
+```
+
+Os dados do Postgres persistem no volume `postgres_data`. Para zerar o banco:
+
+```bash
+docker compose down -v
+```
+
+O Postgres também fica publicado em `localhost:5432` caso você rode `npm run dev` no host apontando para `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/projects`.
+
+## Desenvolvimento sem Docker
+
+Com Node 24 e o `.env` preenchido (Neon ou o Postgres do Compose):
 
 ```bash
 npm install

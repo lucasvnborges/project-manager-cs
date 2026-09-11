@@ -54,7 +54,25 @@ function onSubmit() {
 }
 
 function onKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape') emit('close')
+  if (event.key === 'Escape') closeSearch()
+}
+
+function closeSearch() {
+  clearTimeout(timer)
+  emit('close')
+
+  if (route.path !== '/search') return
+
+  router.push({
+    path: '/',
+    query: {
+      favorites: route.query.favorites === 'true' ? 'true' : undefined,
+      sort:
+        typeof route.query.sort === 'string' && route.query.sort !== 'alphabetical'
+          ? route.query.sort
+          : undefined
+    }
+  })
 }
 
 function applyTerm(value: string) {
@@ -101,7 +119,7 @@ defineExpose({ applyTerm })
         ref="input"
         v-model="term"
         type="search"
-        class="h-full flex-1 bg-transparent text-[12px] text-ink outline-none placeholder:text-ink-subtle"
+        class="h-full flex-1 bg-transparent text-[12px] text-ink outline-none placeholder:text-ink-subtle [&::-webkit-search-cancel-button]:hidden"
         placeholder="Digite o nome do projeto..."
         autocomplete="off"
         @input="onInput"
@@ -109,6 +127,24 @@ defineExpose({ applyTerm })
       />
 
       <button type="submit" class="sr-only">Buscar</button>
+
+      <button
+        type="button"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-subtle transition hover:bg-brand-tint"
+        aria-label="Fechar busca"
+        @click="closeSearch"
+      >
+        <svg
+          class="h-3.5 w-3.5"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.4"
+          aria-hidden="true"
+        >
+          <path d="m4 4 8 8M12 4l-8 8" stroke-linecap="round" />
+        </svg>
+      </button>
     </form>
 
     <SearchHistory v-if="enableHistory" :entries="entries" @select="applyTerm" @remove="remove" />

@@ -50,7 +50,7 @@ async function confirmRemoval() {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-[1440px]">
+  <div class="mx-auto w-full max-w-360">
     <template v-if="store.isEmptyCollection && !store.pending && !store.error">
       <EmptyProjects />
     </template>

@@ -33,7 +33,7 @@ async function onSubmit(payload: FormData) {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-[1440px]">
+  <div class="mx-auto w-full max-w-360">
     <BackLink to="/" />
     <h1 class="mt-2 mb-5 text-[15px] font-semibold text-ink">Novo projeto</h1>
 

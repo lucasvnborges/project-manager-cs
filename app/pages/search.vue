@@ -61,7 +61,7 @@ async function confirmRemoval() {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-[1440px]">
+  <div class="mx-auto w-full max-w-360">
     <BackLink :to="backTarget" />
     <h1 class="mt-2 text-[15px] font-semibold text-ink">Resultado da busca</h1>
 
