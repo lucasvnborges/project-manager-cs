@@ -44,8 +44,9 @@ describe('isValidCivilDate', () => {
 })
 
 describe('todayCivilDate', () => {
-  it('formats the local date without timezone drift', () => {
-    expect(todayCivilDate(new Date(2026, 8, 11, 23, 30))).toBe('2026-09-11')
+  it('uses America/Sao_Paulo so client and server share the same calendar day', () => {
+    expect(todayCivilDate(new Date('2026-09-12T02:30:00.000Z'))).toBe('2026-09-11')
+    expect(todayCivilDate(new Date('2026-09-12T03:30:00.000Z'))).toBe('2026-09-12')
   })
 })
 

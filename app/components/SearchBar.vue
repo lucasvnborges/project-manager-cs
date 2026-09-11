@@ -22,18 +22,41 @@ let timer: ReturnType<typeof setTimeout> | undefined
 watch(
   () => props.initialQuery,
   (value) => {
-    term.value = value ?? ''
+    const next = value ?? ''
+
+    if (next === term.value) return
+    if (next.length === 0 && term.value.length > 0 && term.value.length < SEARCH_MIN_LENGTH) {
+      return
+    }
+
+    term.value = next
   }
 )
+
+function listingQuery() {
+  return {
+    favorites: route.query.favorites === 'true' ? 'true' : undefined,
+    sort:
+      typeof route.query.sort === 'string' && route.query.sort !== 'alphabetical'
+        ? route.query.sort
+        : undefined
+  }
+}
 
 function goToResults(value: string) {
   const trimmed = value.trim()
 
-  if (trimmed.length < SEARCH_MIN_LENGTH) return
+  if (trimmed.length < SEARCH_MIN_LENGTH) {
+    if (route.path === '/search' && typeof route.query.q === 'string') {
+      router.replace({ path: '/search', query: listingQuery() })
+    }
+
+    return
+  }
 
   add(trimmed)
 
-  const query = { ...route.query, q: trimmed }
+  const query = { ...listingQuery(), q: trimmed }
 
   if (route.path === '/search') {
     router.replace({ path: '/search', query })
@@ -65,13 +88,7 @@ function closeSearch() {
 
   router.push({
     path: '/',
-    query: {
-      favorites: route.query.favorites === 'true' ? 'true' : undefined,
-      sort:
-        typeof route.query.sort === 'string' && route.query.sort !== 'alphabetical'
-          ? route.query.sort
-          : undefined
-    }
+    query: listingQuery()
   })
 }
 
@@ -95,7 +112,7 @@ defineExpose({ applyTerm })
 </script>
 
 <template>
-  <div>
+  <div class="relative">
     <form
       class="flex h-[52px] items-center gap-3 bg-surface px-4 shadow-sm sm:px-6"
       role="search"
@@ -147,6 +164,12 @@ defineExpose({ applyTerm })
       </button>
     </form>
 
-    <SearchHistory v-if="enableHistory" :entries="entries" @select="applyTerm" @remove="remove" />
+    <SearchHistory
+      v-if="enableHistory"
+      class="absolute inset-x-0 top-full z-50"
+      :entries="entries"
+      @select="applyTerm"
+      @remove="remove"
+    />
   </div>
 </template>

@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
+import { nextTick } from 'vue'
+import { afterEach, describe, expect, it } from 'vitest'
 import type { Project } from '../../shared/types/project'
 import EmptyProjects from '../../app/components/EmptyProjects.vue'
 import ProjectCard from '../../app/components/ProjectCard.vue'
@@ -97,13 +98,15 @@ describe('ProjectCard', () => {
     const wrapper = await mountSuspended(ProjectCard, { props: { project } })
 
     await wrapper.get('button[aria-haspopup="menu"]').trigger('click')
+    await nextTick()
 
-    const removeButton = wrapper
-      .findAll('[role="menuitem"]')
-      .find((item) => item.text() === 'Remover')
+    const removeButton = [...document.querySelectorAll('[role="menuitem"]')].find(
+      (item) => item.textContent?.trim() === 'Remover'
+    ) as HTMLButtonElement | undefined
 
     expect(removeButton).toBeDefined()
-    await removeButton?.trigger('click')
+    removeButton?.click()
+    await nextTick()
 
     expect(wrapper.emitted('remove')).toHaveLength(1)
   })
@@ -163,24 +166,43 @@ describe('SearchHistory', () => {
 })
 
 describe('ProjectDeleteModal', () => {
+  const mounted: Array<{ unmount: () => void }> = []
+
+  afterEach(() => {
+    while (mounted.length > 0) mounted.pop()?.unmount()
+  })
+
+  function dialog() {
+    const nodes = document.querySelectorAll('[role="dialog"]')
+    return nodes[nodes.length - 1]
+  }
+
   it('names the project and asks for confirmation', async () => {
-    const wrapper = await mountSuspended(ProjectDeleteModal, {
-      props: { projectName: 'Portal Interno' }
-    })
+    mounted.push(
+      await mountSuspended(ProjectDeleteModal, {
+        props: { projectName: 'Portal Interno' }
+      })
+    )
 
-    const dialog = wrapper.get('[role="dialog"]')
+    const node = dialog()
 
-    expect(dialog.attributes('aria-modal')).toBe('true')
-    expect(wrapper.text()).toContain('Essa ação removerá definitivamente o projeto:')
-    expect(wrapper.text()).toContain('Portal Interno')
+    expect(node?.getAttribute('aria-modal')).toBe('true')
+    expect(node?.textContent).toContain('Essa ação removerá definitivamente o projeto:')
+    expect(node?.textContent).toContain('Portal Interno')
   })
 
   it('emits cancel without confirming', async () => {
     const wrapper = await mountSuspended(ProjectDeleteModal, {
       props: { projectName: 'Portal Interno' }
     })
+    mounted.push(wrapper)
 
-    await wrapper.get('button:first-of-type').trigger('click')
+    const cancel = [...(dialog()?.querySelectorAll('button') ?? [])].find(
+      (button) => button.textContent?.trim() === 'Cancelar'
+    )
+
+    cancel?.click()
+    await nextTick()
 
     expect(wrapper.emitted('cancel')).toHaveLength(1)
     expect(wrapper.emitted('confirm')).toBeUndefined()
@@ -190,15 +212,21 @@ describe('ProjectDeleteModal', () => {
     const wrapper = await mountSuspended(ProjectDeleteModal, {
       props: { projectName: 'Portal Interno' }
     })
+    mounted.push(wrapper)
 
-    const buttons = wrapper.findAll('button')
-    await buttons[buttons.length - 1]?.trigger('click')
+    const confirm = [...(dialog()?.querySelectorAll('button') ?? [])].find(
+      (button) => button.textContent?.trim() === 'Confirmar'
+    )
+
+    confirm?.click()
+    await nextTick()
 
     expect(wrapper.emitted('confirm')).toHaveLength(1)
 
     await wrapper.setProps({ pending: true })
+    await nextTick()
 
-    expect(wrapper.findAll('button[disabled]')).toHaveLength(2)
-    expect(wrapper.text()).toContain('Removendo...')
+    expect(dialog()?.querySelectorAll('button[disabled]')).toHaveLength(2)
+    expect(dialog()?.textContent).toContain('Removendo...')
   })
 })

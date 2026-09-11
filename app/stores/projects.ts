@@ -50,6 +50,7 @@ export const useProjectsStore = defineStore('projects', () => {
       error.value = apiErrorMessage(requestError)
       items.value = []
       filteredTotal.value = 0
+      loadedKey.value = null
     } finally {
       pending.value = false
     }

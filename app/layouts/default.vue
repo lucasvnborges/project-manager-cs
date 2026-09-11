@@ -12,17 +12,19 @@ watch(isSearchPage, (onSearchPage) => {
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col bg-canvas">
-    <SearchBar
-      v-if="showSearchBar"
-      :initial-query="currentQuery"
-      :autofocus="searchOpen"
-      :enable-history="searchOpen"
-      @close="searchOpen = false"
-    />
-    <AppHeader v-else @open-search="searchOpen = true" />
+  <div class="flex h-dvh flex-col overflow-hidden bg-canvas">
+    <div class="relative z-40 shrink-0">
+      <SearchBar
+        v-if="showSearchBar"
+        :initial-query="currentQuery"
+        :autofocus="searchOpen"
+        :enable-history="searchOpen"
+        @close="searchOpen = false"
+      />
+      <AppHeader v-else @open-search="searchOpen = true" />
+    </div>
 
-    <main class="flex-1 px-4 pt-6 pb-10 sm:px-6">
+    <main class="min-h-0 flex-1 overflow-y-auto px-4 pt-6 pb-10 sm:px-6">
       <slot />
     </main>
   </div>

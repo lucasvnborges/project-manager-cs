@@ -34,13 +34,14 @@ export function isValidCivilDate(value: string): boolean {
   )
 }
 
-/** Today as a civil date, so comparisons never cross a timezone boundary. */
+/** Today as a civil date in America/Sao_Paulo, matching the product locale. */
 export function todayCivilDate(reference: Date = new Date()): string {
-  const year = reference.getFullYear()
-  const month = String(reference.getMonth() + 1).padStart(2, '0')
-  const day = String(reference.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(reference)
 }
 
 export interface ProjectValidationContext {

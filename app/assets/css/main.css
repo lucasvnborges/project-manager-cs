@@ -27,6 +27,13 @@
 }
 
 @layer base {
+  html,
+  body,
+  #__nuxt {
+    height: 100%;
+    overflow: hidden;
+  }
+
   html {
     background-color: var(--color-canvas);
   }

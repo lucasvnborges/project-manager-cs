@@ -16,9 +16,12 @@ const nameSegments = computed(() => highlightSegments(props.project.name, props.
 </script>
 
 <template>
-  <article class="overflow-hidden rounded-lg bg-surface shadow-[0_1px_3px_rgba(31,27,77,0.08)]">
-    <ProjectCover :url="project.coverUrl" :name="project.name">
-      <div class="absolute right-2 bottom-2 flex items-center gap-1">
+  <article
+    class="relative z-0 rounded-lg bg-surface shadow-[0_1px_3px_rgba(31,27,77,0.08)] focus-within:z-30"
+  >
+    <div class="relative">
+      <ProjectCover class="rounded-t-lg" :url="project.coverUrl" :name="project.name" />
+      <div class="absolute right-2 bottom-2 z-20 flex items-center gap-1">
         <FavoriteButton
           :is-favorite="project.isFavorite"
           :name="project.name"
@@ -31,7 +34,7 @@ const nameSegments = computed(() => highlightSegments(props.project.name, props.
           @remove="emit('remove')"
         />
       </div>
-    </ProjectCover>
+    </div>
 
     <div class="p-3">
       <h3 class="text-[13px] font-semibold text-ink">
