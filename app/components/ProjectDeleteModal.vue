@@ -43,23 +43,23 @@ onBeforeUnmount(() => previouslyFocused?.focus())
 <template>
   <Teleport to="body">
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-header/70 px-4"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-[#181818E5] px-4"
       @click.self="!pending && emit('cancel')"
     >
       <div
         ref="dialog"
-        class="relative w-full max-w-[320px] rounded-lg bg-surface px-6 pt-9 pb-6 text-center shadow-xl"
+        class="relative w-full max-w-[420px] rounded-2xl bg-surface px-8 pt-10 pb-8 text-center shadow-xl sm:px-10"
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-modal-title"
         @keydown="onKeydown"
       >
         <span
-          class="absolute -top-4 left-1/2 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full bg-brand text-white"
+          class="absolute -top-5 left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-brand text-white"
           aria-hidden="true"
         >
           <svg
-            class="h-4 w-4"
+            class="h-[18px] w-[18px]"
             viewBox="0 0 20 20"
             fill="none"
             stroke="currentColor"
@@ -69,17 +69,17 @@ onBeforeUnmount(() => previouslyFocused?.focus())
           </svg>
         </span>
 
-        <h2 id="delete-modal-title" class="text-[13px] font-semibold text-ink">Remover projeto</h2>
+        <h2 id="delete-modal-title" class="text-base font-semibold text-brand">Remover projeto</h2>
 
-        <hr class="my-3 border-line" />
+        <hr class="mt-4 mb-5 border-line" />
 
-        <p class="text-[11px] text-ink-muted">Essa ação removerá definitivamente o projeto:</p>
-        <p class="mt-1 text-[13px] font-medium text-ink">{{ projectName }}</p>
+        <p class="text-[12px] text-ink-muted">Essa ação removerá definitivamente o projeto:</p>
+        <p class="mt-1.5 text-base font-semibold text-ink">{{ projectName }}</p>
 
-        <div class="mt-5 flex flex-col-reverse gap-3 min-[360px]:flex-row min-[360px]:items-center">
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
           <button
             type="button"
-            class="h-10 min-[360px]:h-8 flex-1 rounded-full border border-brand text-[11px] text-ink-muted transition hover:bg-brand-tint disabled:opacity-60"
+            class="h-10 min-w-[148px] rounded-full border border-brand-soft px-6 text-[12px] text-brand-soft transition hover:bg-brand-tint disabled:opacity-60"
             :disabled="pending"
             @click="emit('cancel')"
           >
@@ -88,7 +88,7 @@ onBeforeUnmount(() => previouslyFocused?.focus())
           <button
             ref="confirmButton"
             type="button"
-            class="h-10 min-[360px]:h-8 flex-1 rounded-full bg-brand text-[11px] font-medium text-white transition hover:bg-brand-strong disabled:opacity-60"
+            class="h-10 min-w-[148px] rounded-full bg-brand px-6 text-[12px] font-medium text-white transition hover:bg-brand-strong disabled:opacity-60"
             :disabled="pending"
             @click="emit('confirm')"
           >

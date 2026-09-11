@@ -49,4 +49,11 @@
     outline: 2px solid var(--color-brand);
     outline-offset: 2px;
   }
+
+  button,
+  [type='button'],
+  [type='submit'],
+  [role='button'] {
+    cursor: pointer;
+  }
 }
