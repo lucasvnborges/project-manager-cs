@@ -46,6 +46,18 @@ watch(listQuery, (next) => {
 function onToggleFavorite(project: Project, next: boolean) {
   store.setFavorite(project, next, listQuery.value)
 }
+
+const projectToRemove = ref<Project | null>(null)
+
+async function confirmRemoval() {
+  const target = projectToRemove.value
+
+  if (!target) return
+
+  const removed = await store.remove(target.id, listQuery.value)
+
+  if (removed) projectToRemove.value = null
+}
 </script>
 
 <template>
@@ -97,6 +109,15 @@ function onToggleFavorite(project: Project, next: boolean) {
       :favorite-pending-id="store.favoritePendingId"
       :highlight="term"
       @toggle-favorite="onToggleFavorite"
+      @remove="projectToRemove = $event"
+    />
+
+    <ProjectDeleteModal
+      v-if="projectToRemove"
+      :project-name="projectToRemove.name"
+      :pending="store.deletePendingId === projectToRemove.id"
+      @cancel="projectToRemove = null"
+      @confirm="confirmRemoval"
     />
   </div>
 </template>
