@@ -11,6 +11,7 @@ export default defineEventHandler(async (event): Promise<Project> => {
   const { values, cover, removeCover: shouldRemoveCover } = await readProjectMultipart(event)
 
   let stored: StoredCover | null = null
+  let persisted = false
 
   try {
     const existing = await findProject(id)
@@ -32,13 +33,15 @@ export default defineEventHandler(async (event): Promise<Project> => {
 
     if (!row) throw notFound()
 
+    persisted = true
+
     if (!keepsCover && existing.coverPathname !== stored?.pathname) {
       await removeCover(existing.coverPathname)
     }
 
     return toProject(row)
   } catch (error) {
-    await removeCover(stored?.pathname)
+    if (!persisted) await removeCover(stored?.pathname)
 
     if (isApiError(error)) throw error
     throw internalError(`PATCH /api/projects/${id}`, error)
