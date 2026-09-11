@@ -10,7 +10,13 @@ export default defineNuxtConfig({
     devtools: { enabled: true }
   },
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    server: {
+      watch: {
+        usePolling: process.env.CHOKIDAR_USEPOLLING === 'true',
+        interval: 300
+      }
+    }
   },
   app: {
     head: {
