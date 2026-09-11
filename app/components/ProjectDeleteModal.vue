@@ -75,10 +75,10 @@ onBeforeUnmount(() => previouslyFocused?.focus())
       <p class="text-[11px] text-ink-muted">Essa ação removerá definitivamente o projeto:</p>
       <p class="mt-1 text-[13px] font-medium text-ink">{{ projectName }}</p>
 
-      <div class="mt-5 flex items-center justify-center gap-3">
+      <div class="mt-5 flex flex-col-reverse gap-3 min-[360px]:flex-row min-[360px]:items-center">
         <button
           type="button"
-          class="h-8 flex-1 rounded-full border border-brand text-[11px] text-ink-muted transition hover:bg-brand-tint disabled:opacity-60"
+          class="h-10 min-[360px]:h-8 flex-1 rounded-full border border-brand text-[11px] text-ink-muted transition hover:bg-brand-tint disabled:opacity-60"
           :disabled="pending"
           @click="emit('cancel')"
         >
@@ -87,7 +87,7 @@ onBeforeUnmount(() => previouslyFocused?.focus())
         <button
           ref="confirmButton"
           type="button"
-          class="h-8 flex-1 rounded-full bg-brand text-[11px] font-medium text-white transition hover:bg-brand-strong disabled:opacity-60"
+          class="h-10 min-[360px]:h-8 flex-1 rounded-full bg-brand text-[11px] font-medium text-white transition hover:bg-brand-strong disabled:opacity-60"
           :disabled="pending"
           @click="emit('confirm')"
         >

@@ -14,9 +14,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <ul
-    class="grid grid-cols-1 gap-4 min-[520px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-  >
+  <ul class="grid grid-cols-1 gap-4 min-[520px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
     <li v-for="project in projects" :key="project.id">
       <ProjectCard
         :project="project"

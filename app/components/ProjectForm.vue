@@ -119,7 +119,7 @@ onBeforeUnmount(releaseObjectUrl)
         required
         :error="fieldError('name')"
       >
-        <template #default="{ hasError }">
+        <template #default="{ hasError, errorId }">
           <input
             id="project-name"
             v-model="name"
@@ -127,6 +127,8 @@ onBeforeUnmount(releaseObjectUrl)
             type="text"
             class="h-9 w-full rounded-md border bg-surface px-3 text-[12px] text-ink outline-none"
             :class="hasError ? 'border-danger' : 'border-line-strong'"
+            :aria-invalid="hasError"
+            :aria-describedby="hasError ? errorId : undefined"
             :disabled="submitting"
           />
         </template>
@@ -139,7 +141,7 @@ onBeforeUnmount(releaseObjectUrl)
         required-label="Obrigatório"
         :error="fieldError('client')"
       >
-        <template #default="{ hasError }">
+        <template #default="{ hasError, errorId }">
           <input
             id="project-client"
             v-model="client"
@@ -147,6 +149,8 @@ onBeforeUnmount(releaseObjectUrl)
             type="text"
             class="h-9 w-full rounded-md border bg-surface px-3 text-[12px] text-ink outline-none"
             :class="hasError ? 'border-danger' : 'border-line-strong'"
+            :aria-invalid="hasError"
+            :aria-describedby="hasError ? errorId : undefined"
             :disabled="submitting"
           />
         </template>
@@ -159,7 +163,7 @@ onBeforeUnmount(releaseObjectUrl)
           required
           :error="fieldError('startDate')"
         >
-          <template #default="{ hasError }">
+          <template #default="{ hasError, errorId }">
             <input
               id="project-start"
               v-model="startDate"
@@ -167,6 +171,8 @@ onBeforeUnmount(releaseObjectUrl)
               type="date"
               class="h-9 w-full rounded-md border bg-surface px-3 text-[12px] text-ink outline-none"
               :class="hasError ? 'border-danger' : 'border-line-strong'"
+              :aria-invalid="hasError"
+              :aria-describedby="hasError ? errorId : undefined"
               :disabled="submitting"
             />
           </template>
@@ -178,7 +184,7 @@ onBeforeUnmount(releaseObjectUrl)
           required
           :error="fieldError('endDate')"
         >
-          <template #default="{ hasError }">
+          <template #default="{ hasError, errorId }">
             <input
               id="project-end"
               v-model="endDate"
@@ -186,6 +192,8 @@ onBeforeUnmount(releaseObjectUrl)
               type="date"
               class="h-9 w-full rounded-md border bg-surface px-3 text-[12px] text-ink outline-none"
               :class="hasError ? 'border-danger' : 'border-line-strong'"
+              :aria-invalid="hasError"
+              :aria-describedby="hasError ? errorId : undefined"
               :disabled="submitting"
             />
           </template>

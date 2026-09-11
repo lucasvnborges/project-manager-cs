@@ -7,7 +7,7 @@ const emit = defineEmits<{ select: [term: string]; remove: [term: string] }>()
 <template>
   <div
     v-if="entries.length > 0"
-    class="border-x border-b border-brand/30 bg-surface shadow-md"
+    class="max-h-60 overflow-y-auto border-x border-b border-brand/30 bg-surface shadow-md"
     role="group"
     aria-label="Buscas recentes"
   >

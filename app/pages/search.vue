@@ -98,6 +98,7 @@ async function confirmRemoval() {
     <p
       v-else-if="store.items.length === 0"
       class="mt-6 rounded-lg bg-surface p-10 text-center text-[12px] text-ink-muted"
+      aria-live="polite"
     >
       Nenhum projeto encontrado para “{{ term }}”.
     </p>

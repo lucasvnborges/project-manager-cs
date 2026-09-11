@@ -57,7 +57,7 @@ onBeforeUnmount(() => {
     <button
       ref="trigger"
       type="button"
-      class="flex h-7 w-7 items-center justify-center rounded-full bg-white text-ink-muted shadow-sm transition hover:bg-white/90"
+      class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink-muted shadow-sm transition hover:bg-white/90"
       :aria-label="`Opções do projeto ${name}`"
       :aria-expanded="open"
       aria-haspopup="menu"

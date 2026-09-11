@@ -13,7 +13,7 @@ const DEBOUNCE_MS = 300
 
 const route = useRoute()
 const router = useRouter()
-const history = useSearchHistory()
+const { entries, load, add, remove } = useSearchHistory()
 
 const term = ref(props.initialQuery ?? '')
 const input = ref<HTMLInputElement | null>(null)
@@ -31,7 +31,7 @@ function goToResults(value: string) {
 
   if (trimmed.length < SEARCH_MIN_LENGTH) return
 
-  history.add(trimmed)
+  add(trimmed)
 
   const query = { ...route.query, q: trimmed }
 
@@ -63,7 +63,7 @@ function applyTerm(value: string) {
 }
 
 onMounted(async () => {
-  history.load()
+  load()
 
   if (!props.autofocus) return
 
@@ -111,11 +111,6 @@ defineExpose({ applyTerm })
       <button type="submit" class="sr-only">Buscar</button>
     </form>
 
-    <SearchHistory
-      v-if="enableHistory"
-      :entries="history.entries.value"
-      @select="applyTerm"
-      @remove="history.remove"
-    />
+    <SearchHistory v-if="enableHistory" :entries="entries" @select="applyTerm" @remove="remove" />
   </div>
 </template>

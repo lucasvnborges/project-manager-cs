@@ -90,6 +90,7 @@ async function confirmRemoval() {
       <p
         v-else-if="store.hasNoMatches"
         class="mt-6 rounded-lg bg-surface p-10 text-center text-[12px] text-ink-muted"
+        aria-live="polite"
       >
         Nenhum projeto favorito por aqui. Marque um projeto com a estrela para vê-lo nesta lista.
       </p>

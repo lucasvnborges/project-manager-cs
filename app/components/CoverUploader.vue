@@ -104,7 +104,7 @@ watch(
 
       <button
         type="button"
-        class="rounded-full border border-line-strong px-4 py-1.5 text-[11px] text-ink-muted transition hover:bg-brand-tint"
+        class="min-h-10 rounded-full border border-line-strong px-4 py-1.5 text-[11px] text-ink-muted transition hover:bg-brand-tint"
         :disabled="disabled"
         @click="input?.click()"
       >

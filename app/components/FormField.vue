@@ -22,9 +22,9 @@ defineProps<{
     </label>
 
     <div class="mt-1.5">
-      <slot :has-error="Boolean(error)" />
+      <slot :has-error="Boolean(error)" :error-id="`${inputId}-error`" />
     </div>
 
-    <p v-if="error" class="mt-1 text-[10px] text-danger">{{ error }}</p>
+    <p v-if="error" :id="`${inputId}-error`" class="mt-1 text-[10px] text-danger">{{ error }}</p>
   </div>
 </template>
