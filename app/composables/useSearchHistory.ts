@@ -1,28 +1,49 @@
-const STORAGE_KEY = 'gerenciador-projetos:search-history'
-const MAX_ENTRIES = 5
+export const SEARCH_HISTORY_KEY = 'gerenciador-projetos:search-history'
+export const SEARCH_HISTORY_LIMIT = 5
 
-function readStorage(): string[] {
+export function parseSearchHistory(raw: string | null): string[] {
+  if (!raw) return []
+
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-
-    if (!raw) return []
-
     const parsed: unknown = JSON.parse(raw)
 
     if (!Array.isArray(parsed)) return []
 
     return parsed
       .filter((entry): entry is string => typeof entry === 'string')
-      .slice(0, MAX_ENTRIES)
+      .slice(0, SEARCH_HISTORY_LIMIT)
   } catch {
-    // Unavailable or corrupted storage must not break the search.
+    return []
+  }
+}
+
+export function addSearchHistoryEntry(entries: string[], term: string): string[] {
+  const normalized = term.trim()
+
+  if (!normalized) return entries
+
+  const withoutDuplicate = entries.filter(
+    (entry) => entry.toLowerCase() !== normalized.toLowerCase()
+  )
+
+  return [normalized, ...withoutDuplicate].slice(0, SEARCH_HISTORY_LIMIT)
+}
+
+export function removeSearchHistoryEntry(entries: string[], term: string): string[] {
+  return entries.filter((entry) => entry !== term)
+}
+
+function readStorage(): string[] {
+  try {
+    return parseSearchHistory(window.localStorage.getItem(SEARCH_HISTORY_KEY))
+  } catch {
     return []
   }
 }
 
 function writeStorage(entries: string[]): void {
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(entries))
+    window.localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(entries))
   } catch {
     // Ignore quota or privacy-mode failures.
   }
@@ -41,20 +62,12 @@ export function useSearchHistory() {
   }
 
   function add(term: string): void {
-    const normalized = term.trim()
-
-    if (!normalized) return
-
-    const withoutDuplicate = entries.value.filter(
-      (entry) => entry.toLowerCase() !== normalized.toLowerCase()
-    )
-
-    entries.value = [normalized, ...withoutDuplicate].slice(0, MAX_ENTRIES)
+    entries.value = addSearchHistoryEntry(entries.value, term)
     writeStorage(entries.value)
   }
 
   function remove(term: string): void {
-    entries.value = entries.value.filter((entry) => entry !== term)
+    entries.value = removeSearchHistoryEntry(entries.value, term)
     writeStorage(entries.value)
   }
 
