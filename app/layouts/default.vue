@@ -13,18 +13,21 @@ watch(isSearchPage, (onSearchPage) => {
 
 <template>
   <div class="flex h-dvh flex-col overflow-hidden bg-canvas">
-    <div class="relative z-40 shrink-0">
-      <SearchBar
-        v-if="showSearchBar"
-        :initial-query="currentQuery"
-        :autofocus="searchOpen"
-        :enable-history="searchOpen"
-        @close="searchOpen = false"
-      />
-      <AppHeader v-else @open-search="searchOpen = true" />
+    <div class="relative z-40 h-16 shrink-0">
+      <Transition name="fade-chrome">
+        <SearchBar
+          v-if="showSearchBar"
+          key="search"
+          :initial-query="currentQuery"
+          :autofocus="searchOpen"
+          :enable-history="searchOpen"
+          @close="searchOpen = false"
+        />
+        <AppHeader v-else key="header" @open-search="searchOpen = true" />
+      </Transition>
     </div>
 
-    <main class="min-h-0 flex-1 overflow-y-auto px-4 pt-6 pb-10 sm:px-6">
+    <main class="relative min-h-0 flex-1 overflow-y-auto px-4 pt-6 pb-10 sm:px-6">
       <slot />
     </main>
   </div>

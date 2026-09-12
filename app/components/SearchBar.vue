@@ -24,8 +24,8 @@ watch(
   (value) => {
     const next = value ?? ''
 
-    if (next === term.value) return
-    if (next.length === 0 && term.value.length > 0 && term.value.length < SEARCH_MIN_LENGTH) {
+    if (next === term.value || next === term.value.trim()) return
+    if (next.length === 0 && term.value.trim().length < SEARCH_MIN_LENGTH) {
       return
     }
 
@@ -112,9 +112,9 @@ defineExpose({ applyTerm })
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative h-full">
     <form
-      class="flex h-[52px] items-center gap-3 bg-surface px-4 shadow-sm sm:px-6"
+      class="flex h-16 items-center gap-3 bg-surface px-4 shadow-sm sm:px-6"
       role="search"
       @submit.prevent="onSubmit"
     >

@@ -3,7 +3,7 @@ const emit = defineEmits<{ openSearch: [] }>()
 </script>
 
 <template>
-  <header class="relative flex h-[52px] items-center justify-center bg-header px-4 shadow-sm">
+  <header class="relative flex h-16 items-center justify-center bg-header px-4 shadow-sm">
     <NuxtLink to="/" class="rounded-sm" aria-label="Gerenciador de Projetos, ir para a listagem">
       <AppLogo />
     </NuxtLink>

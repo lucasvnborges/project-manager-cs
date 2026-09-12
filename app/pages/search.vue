@@ -70,53 +70,59 @@ async function confirmRemoval() {
     <BackLink :to="backTarget" />
     <h1 class="mt-2 text-[15px] font-semibold text-ink">Resultado da busca</h1>
 
-    <p
-      v-if="!isSearchable"
-      class="mt-6 rounded-lg bg-surface p-10 text-center text-[12px] text-ink-muted"
+    <div
+      class="motion-safe:transition-opacity motion-safe:duration-200"
+      :class="store.pending && isSearchable ? 'opacity-50' : 'opacity-100'"
+      :aria-busy="store.pending && isSearchable"
     >
-      Digite ao menos {{ SEARCH_MIN_LENGTH }} caracteres para buscar um projeto.
-    </p>
-
-    <p
-      v-else-if="store.error"
-      class="mt-6 rounded-lg bg-surface p-6 text-center text-[12px] text-danger"
-      role="alert"
-    >
-      {{ store.error }}
-      <button
-        type="button"
-        class="ml-2 font-semibold text-brand underline"
-        @click="store.reload(listQuery)"
+      <p
+        v-if="!isSearchable"
+        class="mt-6 rounded-lg bg-surface p-10 text-center text-[12px] text-ink-muted"
       >
-        Tentar novamente
-      </button>
-    </p>
+        Digite ao menos {{ SEARCH_MIN_LENGTH }} caracteres para buscar um projeto.
+      </p>
 
-    <p
-      v-else-if="store.pending"
-      class="mt-6 rounded-lg bg-surface p-10 text-center text-[12px] text-ink-muted"
-      aria-live="polite"
-    >
-      Buscando projetos...
-    </p>
+      <p
+        v-else-if="store.error"
+        class="mt-6 rounded-lg bg-surface p-6 text-center text-[12px] text-danger"
+        role="alert"
+      >
+        {{ store.error }}
+        <button
+          type="button"
+          class="ml-2 font-semibold text-brand underline"
+          @click="store.reload(listQuery)"
+        >
+          Tentar novamente
+        </button>
+      </p>
 
-    <p
-      v-else-if="store.items.length === 0"
-      class="mt-6 rounded-lg bg-surface p-10 text-center text-[12px] text-ink-muted"
-      aria-live="polite"
-    >
-      Nenhum projeto encontrado para “{{ term }}”.
-    </p>
+      <p
+        v-else-if="store.pending && store.items.length === 0"
+        class="mt-6 rounded-lg bg-surface p-10 text-center text-[12px] text-ink-muted"
+        aria-live="polite"
+      >
+        Buscando projetos...
+      </p>
 
-    <ProjectGrid
-      v-else
-      class="mt-4"
-      :projects="visibleProjects"
-      :favorite-pending-id="store.favoritePendingId"
-      :highlight="term"
-      @toggle-favorite="onToggleFavorite"
-      @remove="projectToRemove = $event"
-    />
+      <p
+        v-else-if="store.items.length === 0"
+        class="mt-6 rounded-lg bg-surface p-10 text-center text-[12px] text-ink-muted"
+        aria-live="polite"
+      >
+        Nenhum projeto encontrado para “{{ term }}”.
+      </p>
+
+      <ProjectGrid
+        v-else
+        class="mt-4"
+        :projects="visibleProjects"
+        :favorite-pending-id="store.favoritePendingId"
+        :highlight="term"
+        @toggle-favorite="onToggleFavorite"
+        @remove="projectToRemove = $event"
+      />
+    </div>
 
     <ProjectDeleteModal
       v-if="projectToRemove"

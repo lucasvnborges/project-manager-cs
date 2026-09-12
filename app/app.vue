@@ -2,7 +2,7 @@
   <div class="h-full overflow-hidden">
     <NuxtRouteAnnouncer />
     <NuxtLayout>
-      <NuxtPage />
+      <NuxtPage :transition="{ name: 'page' }" />
     </NuxtLayout>
   </div>
 </template>
