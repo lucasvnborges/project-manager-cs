@@ -44,7 +44,7 @@ Ambas são **somente servidor**. Não as exponha em `runtimeConfig.public` nem c
 
 1. Crie um projeto Neon (plano Free) e copie a connection string.
 2. Crie um Blob store na Vercel e copie o token de leitura/escrita.
-3. Aplique a migration **uma vez**, fora do cold start das Functions:
+3. A Vercel aplica a migration no build (`vercel-build`). Localmente ou no Docker, rode:
 
 ```bash
 npm run db:migrate
@@ -95,11 +95,10 @@ O Hobby é suficiente para este desafio. Não é necessário `vercel.json` nem `
 1. Publique o repositório e importe o projeto na Vercel.
 2. Confirme o Framework Preset **Nuxt.js**.
 3. Defina Node.js **24.x**.
-4. Build Command: `npm run build`.
+4. Deixe o Build Command padrão. A Vercel usa `vercel-build`, que aplica a migration e depois faz `nuxt build`.
 5. Conecte Neon (plano Free) e Vercel Blob.
-6. Cadastre `DATABASE_URL` e `BLOB_READ_WRITE_TOKEN` em Production, Preview e Development.
-7. Rode `npm run db:migrate` contra o banco de produção **antes** do primeiro deploy útil.
-8. Prefira um banco de preview isolado para não apagar dados de produção nos testes.
+6. Cadastre `DATABASE_URL` e `BLOB_READ_WRITE_TOKEN` em Production, Preview e Development **antes** do primeiro deploy. Sem `DATABASE_URL` no build, a migration falha.
+7. Prefira um banco de preview isolado para não apagar dados de produção nos testes.
 
 Limites relevantes do free tier:
 
