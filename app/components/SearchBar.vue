@@ -15,15 +15,23 @@ const route = useRoute()
 const router = useRouter()
 const { entries, load, add, remove } = useSearchHistory()
 
-const term = ref(props.initialQuery ?? '')
+const term = defineModel<string>({ default: '' })
 const input = ref<HTMLInputElement | null>(null)
+const focused = ref(false)
 let timer: ReturnType<typeof setTimeout> | undefined
+let lastSubmitted = ''
+
+if (!term.value && props.initialQuery) {
+  term.value = props.initialQuery
+}
 
 watch(
   () => props.initialQuery,
   (value) => {
     const next = value ?? ''
 
+    if (focused.value) return
+    if (next === lastSubmitted) return
     if (next === term.value || next === term.value.trim()) return
     if (next.length === 0 && term.value.trim().length < SEARCH_MIN_LENGTH) {
       return
@@ -45,6 +53,7 @@ function listingQuery() {
 
 function goToResults(value: string) {
   const trimmed = value.trim()
+  lastSubmitted = trimmed.length >= SEARCH_MIN_LENGTH ? trimmed : ''
 
   if (trimmed.length < SEARCH_MIN_LENGTH) {
     if (route.path === '/search' && typeof route.query.q === 'string') {
@@ -78,6 +87,14 @@ function onSubmit() {
 
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') closeSearch()
+}
+
+function onFocus() {
+  focused.value = true
+}
+
+function onBlur() {
+  focused.value = false
 }
 
 function closeSearch() {

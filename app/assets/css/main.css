@@ -73,12 +73,6 @@
     opacity: 0;
   }
 
-  .page-leave-active {
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-  }
-
   .fade-chrome-enter-active,
   .fade-chrome-leave-active {
     position: absolute;
