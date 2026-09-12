@@ -7,24 +7,25 @@ import {
   type ProjectSort,
   SEARCH_MIN_LENGTH
 } from '#shared/types/project'
-import {
-  hasErrors,
-  normalizeText,
-  type ProjectValidationContext,
-  validateProject
-} from '#shared/validation/project'
+import { hasErrors, normalizeText, toIsoDate, validateProject } from '#shared/validation/project'
 import type { ProjectRow } from '../database/schema'
 import { badRequest } from './api-error'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+function asCivilDate(value: string | Date): string {
+  if (value instanceof Date) return value.toISOString().slice(0, 10)
+
+  return toIsoDate(value) ?? value.slice(0, 10)
+}
 
 export function toProject(row: ProjectRow): Project {
   return {
     id: row.id,
     name: row.name,
     client: row.client,
-    startDate: row.startDate,
-    endDate: row.endDate,
+    startDate: asCivilDate(row.startDate),
+    endDate: asCivilDate(row.endDate),
     isFavorite: row.isFavorite,
     coverUrl: row.coverUrl,
     createdAt: row.createdAt.toISOString(),
@@ -41,18 +42,15 @@ export function assertProjectId(id: string | undefined): string {
 }
 
 /** Validates on the server regardless of what the client already checked. */
-export function assertValidProject(
-  values: ProjectFormValues,
-  context: ProjectValidationContext = {}
-): ProjectFormValues {
+export function assertValidProject(values: ProjectFormValues): ProjectFormValues {
   const normalized: ProjectFormValues = {
     name: normalizeText(values.name),
     client: normalizeText(values.client),
-    startDate: values.startDate.trim(),
-    endDate: values.endDate.trim()
+    startDate: toIsoDate(values.startDate) ?? values.startDate.trim(),
+    endDate: toIsoDate(values.endDate) ?? values.endDate.trim()
   }
 
-  const errors = validateProject(normalized, context)
+  const errors = validateProject(normalized)
 
   if (hasErrors(errors)) {
     throw badRequest('Verifique os campos do formulário.', errors)

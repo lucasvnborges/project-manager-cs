@@ -120,6 +120,30 @@ describe('GET /api/projects', () => {
     await expectStatus(listHandler(createEvent({ query: { sort: 'random' } })), 400)
   })
 
+  it('sorts recent-start by startDate, not createdAt', async () => {
+    db.listProjects.mockResolvedValue([
+      row({
+        id: '11111111-1111-4111-8111-111111111111',
+        name: 'Criado por último',
+        startDate: '2026-01-01',
+        createdAt: new Date('2026-09-11T23:00:00.000Z')
+      }),
+      row({
+        id: '22222222-2222-4222-8222-222222222222',
+        name: 'Criado primeiro',
+        startDate: '2026-08-01',
+        createdAt: new Date('2026-01-01T00:00:00.000Z')
+      })
+    ])
+
+    const result = await listHandler(createEvent({ query: { sort: 'recent-start' } }))
+
+    expect(result.items.map((item) => item.id)).toEqual([
+      '22222222-2222-4222-8222-222222222222',
+      '11111111-1111-4111-8111-111111111111'
+    ])
+  })
+
   it('hides database failures behind a generic 500', async () => {
     db.listProjects.mockRejectedValue(new Error('connection to postgres://secret failed'))
 

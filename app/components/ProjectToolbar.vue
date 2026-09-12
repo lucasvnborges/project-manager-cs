@@ -11,9 +11,9 @@ const emit = defineEmits<{
 
 <template>
   <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-    <h1 class="text-[15px] font-semibold text-ink">
+    <h1 class="text-[15px] font-semibold text-[#1F1283]">
       Projetos
-      <span class="text-[13px] font-normal text-ink-subtle">({{ total }})</span>
+      <span class="text-[13px] font-normal">({{ total }})</span>
     </h1>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">

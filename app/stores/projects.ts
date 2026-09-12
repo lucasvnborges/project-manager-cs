@@ -5,6 +5,8 @@ import type {
   ProjectListResponse,
   ProjectSort
 } from '#shared/types/project'
+import { sortProjects } from '#shared/utils/project-list'
+import { todayCivilDate } from '#shared/validation/project'
 import { apiErrorMessage } from '../utils/api'
 
 function queryKey(query: ProjectListQuery): string {
@@ -42,7 +44,8 @@ export const useProjectsStore = defineStore('projects', () => {
         }
       })
 
-      items.value = response.items
+      const sort = query.sort ?? 'alphabetical'
+      items.value = sortProjects(response.items, sort, todayCivilDate())
       total.value = response.total
       filteredTotal.value = response.filteredTotal
       loadedKey.value = queryKey(query)

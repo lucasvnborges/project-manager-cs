@@ -18,7 +18,7 @@ export default defineEventHandler(async (event): Promise<Project> => {
 
     if (!existing) throw notFound()
 
-    const validated = assertValidProject(values, { originalStartDate: existing.startDate })
+    const validated = assertValidProject(values)
 
     if (cover) {
       stored = await uploadCover(id, cover)

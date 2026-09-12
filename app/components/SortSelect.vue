@@ -1,18 +1,30 @@
 <script setup lang="ts">
 import { PROJECT_SORTS, PROJECT_SORT_LABELS, type ProjectSort } from '#shared/types/project'
 
-defineProps<{ modelValue: ProjectSort }>()
+const props = defineProps<{ modelValue: ProjectSort }>()
 const emit = defineEmits<{ 'update:modelValue': [value: ProjectSort] }>()
+
+const selected = computed({
+  get: () => props.modelValue,
+  set: (value: ProjectSort) => emit('update:modelValue', value)
+})
+
+const selectedLabel = computed(() => PROJECT_SORT_LABELS[selected.value])
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative inline-grid items-center justify-items-stretch">
     <label class="sr-only" for="sort-select">Ordenar projetos</label>
+    <span
+      class="invisible col-start-1 row-start-1 whitespace-nowrap py-1.5 pr-8 pl-3 text-[11px]"
+      aria-hidden="true"
+    >
+      {{ selectedLabel }}
+    </span>
     <select
       id="sort-select"
-      class="w-full appearance-none rounded-md border border-line-strong bg-surface py-1.5 pr-8 pl-3 text-[11px] text-ink sm:w-[155px]"
-      :value="modelValue"
-      @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value as ProjectSort)"
+      v-model="selected"
+      class="col-start-1 row-start-1 w-full min-w-0 appearance-none rounded-md border border-line-strong bg-surface py-1.5 pr-8 pl-3 text-[11px] text-ink"
     >
       <option v-for="sort in PROJECT_SORTS" :key="sort" :value="sort">
         {{ PROJECT_SORT_LABELS[sort] }}

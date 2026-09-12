@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from 'vee-validate'
 import type { ApiErrorBody, ProjectFormValues } from '#shared/types/project'
-import { hasErrors, validateProject } from '#shared/validation/project'
+import { hasErrors, isoDateToBr, toIsoDate, validateProject } from '#shared/validation/project'
 
 const props = defineProps<{
   initialValues?: ProjectFormValues
@@ -15,10 +15,16 @@ const emit = defineEmits<{ submit: [payload: FormData] }>()
 
 const EMPTY_VALUES: ProjectFormValues = { name: '', client: '', startDate: '', endDate: '' }
 
-/** Lets an edit keep a past start date it never changed. */
-const validationContext = computed(() => ({
-  originalStartDate: props.initialValues?.startDate
-}))
+function toDisplayValues(values?: ProjectFormValues): ProjectFormValues {
+  if (!values) return EMPTY_VALUES
+
+  return {
+    name: values.name,
+    client: values.client,
+    startDate: isoDateToBr(values.startDate),
+    endDate: isoDateToBr(values.endDate)
+  }
+}
 
 type FieldContext = { form: Partial<ProjectFormValues> }
 
@@ -30,12 +36,12 @@ function fieldValidator(field: keyof ProjectFormValues) {
       [field]: typeof value === 'string' ? value : ''
     }
 
-    return validateProject(candidate, validationContext.value)[field] ?? true
+    return validateProject(candidate)[field] ?? true
   }
 }
 
 const { defineField, errors, values, handleSubmit } = useForm<ProjectFormValues>({
-  initialValues: props.initialValues ?? EMPTY_VALUES,
+  initialValues: toDisplayValues(props.initialValues),
   validationSchema: {
     name: fieldValidator('name'),
     client: fieldValidator('client'),
@@ -46,8 +52,8 @@ const { defineField, errors, values, handleSubmit } = useForm<ProjectFormValues>
 
 const [name, nameAttrs] = defineField('name')
 const [client, clientAttrs] = defineField('client')
-const [startDate, startDateAttrs] = defineField('startDate')
-const [endDate, endDateAttrs] = defineField('endDate')
+const [startDate] = defineField('startDate')
+const [endDate] = defineField('endDate')
 
 const coverFile = ref<File | null>(null)
 const coverPreview = ref<string | null>(props.initialCoverUrl ?? null)
@@ -56,9 +62,7 @@ const coverError = ref<string | null>(null)
 let objectUrl: string | null = null
 
 /** Deterministic gate for the submit button, independent of touched state. */
-const isValid = computed(
-  () => !hasErrors(validateProject(values as ProjectFormValues, validationContext.value))
-)
+const isValid = computed(() => !hasErrors(validateProject(values as ProjectFormValues)))
 
 const fieldError = (field: keyof ProjectFormValues) =>
   errors.value[field] ?? props.serverFieldErrors?.[field]
@@ -94,8 +98,8 @@ const onSubmit = handleSubmit((formValues) => {
 
   payload.set('name', formValues.name)
   payload.set('client', formValues.client)
-  payload.set('startDate', formValues.startDate)
-  payload.set('endDate', formValues.endDate)
+  payload.set('startDate', toIsoDate(formValues.startDate) ?? formValues.startDate)
+  payload.set('endDate', toIsoDate(formValues.endDate) ?? formValues.endDate)
 
   if (coverFile.value) payload.set('cover', coverFile.value)
   if (coverRemoved.value && !coverFile.value) payload.set('removeCover', 'true')
@@ -164,15 +168,11 @@ onBeforeUnmount(releaseObjectUrl)
           :error="fieldError('startDate')"
         >
           <template #default="{ hasError, errorId }">
-            <input
+            <DateInput
               id="project-start"
               v-model="startDate"
-              v-bind="startDateAttrs"
-              type="date"
-              class="h-9 w-full rounded-md border bg-surface px-3 text-[12px] text-ink outline-none"
-              :class="hasError ? 'border-danger' : 'border-line-strong'"
-              :aria-invalid="hasError"
-              :aria-describedby="hasError ? errorId : undefined"
+              :invalid="hasError"
+              :described-by="hasError ? errorId : undefined"
               :disabled="submitting"
             />
           </template>
@@ -185,15 +185,11 @@ onBeforeUnmount(releaseObjectUrl)
           :error="fieldError('endDate')"
         >
           <template #default="{ hasError, errorId }">
-            <input
+            <DateInput
               id="project-end"
               v-model="endDate"
-              v-bind="endDateAttrs"
-              type="date"
-              class="h-9 w-full rounded-md border bg-surface px-3 text-[12px] text-ink outline-none"
-              :class="hasError ? 'border-danger' : 'border-line-strong'"
-              :aria-invalid="hasError"
-              :aria-describedby="hasError ? errorId : undefined"
+              :invalid="hasError"
+              :described-by="hasError ? errorId : undefined"
               :disabled="submitting"
             />
           </template>

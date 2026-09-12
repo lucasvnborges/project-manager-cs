@@ -3,7 +3,7 @@ import type { ProjectListResponse } from '#shared/types/project'
 import { todayCivilDate } from '#shared/validation/project'
 import { listProjects } from '../../database/projects'
 import { internalError, isApiError } from '../../utils/api-error'
-import { buildProjectList } from '../../utils/project-list'
+import { buildProjectList } from '#shared/utils/project-list'
 import { parseListQuery, toProject } from '../../utils/project-validation'
 
 export default defineEventHandler(async (event): Promise<ProjectListResponse> => {

@@ -5,6 +5,8 @@ import {
   type ProjectSort,
   SEARCH_MIN_LENGTH
 } from '#shared/types/project'
+import { sortProjects } from '#shared/utils/project-list'
+import { todayCivilDate } from '#shared/validation/project'
 import { useProjectsStore } from '../stores/projects'
 
 const route = useRoute()
@@ -26,6 +28,9 @@ const listQuery = computed(() => ({
   favorites: favoritesOnly.value,
   sort: sort.value
 }))
+const visibleProjects = computed(() =>
+  sortProjects(store.items, sort.value, todayCivilDate())
+)
 
 const backTarget = computed(() => ({
   path: '/',
@@ -40,7 +45,7 @@ if (isSearchable.value) {
 }
 
 watch(listQuery, (next) => {
-  if (isSearchable.value) store.load(next)
+  if (isSearchable.value) store.reload(next)
 })
 
 function onToggleFavorite(project: Project, next: boolean) {
@@ -106,7 +111,7 @@ async function confirmRemoval() {
     <ProjectGrid
       v-else
       class="mt-4"
-      :projects="store.items"
+      :projects="visibleProjects"
       :favorite-pending-id="store.favoritePendingId"
       :highlight="term"
       @toggle-favorite="onToggleFavorite"

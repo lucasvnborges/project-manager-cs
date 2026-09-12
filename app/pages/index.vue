@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { PROJECT_SORTS, type Project, type ProjectSort } from '#shared/types/project'
+import { sortProjects } from '#shared/utils/project-list'
+import { todayCivilDate } from '#shared/validation/project'
 import { useProjectsStore } from '../stores/projects'
 
 const route = useRoute()
@@ -16,9 +18,12 @@ const sort = computed<ProjectSort>(() => {
 })
 
 const listQuery = computed(() => ({ favorites: favoritesOnly.value, sort: sort.value }))
+const visibleProjects = computed(() =>
+  sortProjects(store.items, sort.value, todayCivilDate())
+)
 
 await store.load(listQuery.value)
-watch(listQuery, (next) => store.load(next))
+watch(listQuery, (next) => store.reload(next))
 
 function setFavoritesOnly(value: boolean) {
   router.replace({
@@ -98,7 +103,7 @@ async function confirmRemoval() {
       <ProjectGrid
         v-else
         class="mt-6"
-        :projects="store.items"
+        :projects="visibleProjects"
         :favorite-pending-id="store.favoritePendingId"
         @toggle-favorite="onToggleFavorite"
         @remove="projectToRemove = $event"

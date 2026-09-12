@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Project } from '../../shared/types/project'
-import { buildProjectList, matchesQuery, sortProjects } from '../../server/utils/project-list'
+import { buildProjectList, matchesQuery, sortProjects } from '../../shared/utils/project-list'
 
 const TODAY = '2026-09-11'
 
@@ -58,15 +58,51 @@ describe('sortProjects', () => {
     expect(sortProjects(items, 'alphabetical', TODAY).map((item) => item.id)).toEqual(['a1', 'b2'])
   })
 
-  it('sorts most recent start date first', () => {
+  it('sorts start dates from closest to today to farthest', () => {
     const items = [
-      project({ id: 'old', name: 'A Projeto', startDate: '2026-01-01' }),
-      project({ id: 'new', name: 'B Projeto', startDate: '2026-06-01' })
+      project({ id: 'far-future', name: 'A Projeto', startDate: '2026-12-12' }),
+      project({ id: 'yesterday', name: 'B Projeto', startDate: '2026-09-10' }),
+      project({ id: 'next-week', name: 'C Projeto', startDate: '2026-09-20' })
     ]
 
     expect(sortProjects(items, 'recent-start', TODAY).map((item) => item.id)).toEqual([
-      'new',
-      'old'
+      'yesterday',
+      'next-week',
+      'far-future'
+    ])
+  })
+
+  it('ignores createdAt when sorting by most recent start', () => {
+    const items = [
+      project({
+        id: 'created-last',
+        name: 'Criado por último',
+        startDate: '2026-01-01',
+        createdAt: '2026-09-11T23:00:00.000Z'
+      }),
+      project({
+        id: 'created-first',
+        name: 'Criado primeiro',
+        startDate: '2026-08-01',
+        createdAt: '2026-01-01T00:00:00.000Z'
+      })
+    ]
+
+    expect(sortProjects(items, 'recent-start', TODAY).map((item) => item.id)).toEqual([
+      'created-first',
+      'created-last'
+    ])
+  })
+
+  it('treats a past start and a future start by distance to today', () => {
+    const items = [
+      project({ id: 'far-past', name: 'A Projeto', startDate: '2020-01-01' }),
+      project({ id: 'near-future', name: 'B Projeto', startDate: '2026-09-20' })
+    ]
+
+    expect(sortProjects(items, 'recent-start', TODAY).map((item) => item.id)).toEqual([
+      'near-future',
+      'far-past'
     ])
   })
 

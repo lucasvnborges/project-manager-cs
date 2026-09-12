@@ -1,4 +1,5 @@
-import type { Project, ProjectSort } from '#shared/types/project'
+import type { Project, ProjectSort } from '../types/project'
+import { toIsoDate } from '../validation/project'
 
 const collator = new Intl.Collator('pt-BR', { sensitivity: 'base' })
 
@@ -20,6 +21,29 @@ function byNameThenId(a: Project, b: Project): number {
   return byName !== 0 ? byName : a.id.localeCompare(b.id)
 }
 
+/** Civil `YYYY-MM-DD` from ISO, BR or Date-like strings — never createdAt. */
+export function civilDate(value: string): string {
+  return toIsoDate(value) ?? value.slice(0, 10)
+}
+
+function utcDay(value: string): number {
+  const [year, month, day] = civilDate(value).split('-').map(Number)
+
+  return Date.UTC(year, (month ?? 1) - 1, day)
+}
+
+function distanceFromToday(value: string, today: string): number {
+  return Math.abs(utcDay(value) - utcDay(today))
+}
+
+function byNearestStart(today: string) {
+  return (a: Project, b: Project): number => {
+    const byDistance = distanceFromToday(a.startDate, today) - distanceFromToday(b.startDate, today)
+
+    return byDistance !== 0 ? byDistance : byNameThenId(a, b)
+  }
+}
+
 /**
  * Sorts a copy of the list. Deadlines that have not passed come first in
  * ascending order; overdue projects follow, most recent first.
@@ -28,22 +52,19 @@ export function sortProjects(items: Project[], sort: ProjectSort, today: string)
   const sorted = [...items]
 
   if (sort === 'recent-start') {
-    return sorted.sort((a, b) => {
-      if (a.startDate !== b.startDate) return a.startDate < b.startDate ? 1 : -1
-      return byNameThenId(a, b)
-    })
+    return sorted.sort(byNearestStart(today))
   }
 
   if (sort === 'nearest-deadline') {
     return sorted.sort((a, b) => {
-      const aOverdue = a.endDate < today
-      const bOverdue = b.endDate < today
+      const aOverdue = civilDate(a.endDate) < today
+      const bOverdue = civilDate(b.endDate) < today
 
       if (aOverdue !== bOverdue) return aOverdue ? 1 : -1
 
       if (a.endDate !== b.endDate) {
-        if (aOverdue) return a.endDate < b.endDate ? 1 : -1
-        return a.endDate < b.endDate ? -1 : 1
+        if (aOverdue) return civilDate(a.endDate) < civilDate(b.endDate) ? 1 : -1
+        return civilDate(a.endDate) < civilDate(b.endDate) ? -1 : 1
       }
 
       return byNameThenId(a, b)

@@ -148,6 +148,9 @@ describe('ProjectForm', () => {
 
     expect((wrapper.get('#project-name').element as HTMLInputElement).value).toBe('Portal Interno')
     expect((wrapper.get('#project-client').element as HTMLInputElement).value).toBe('Clicksign')
+    expect((wrapper.get('#project-start').element as HTMLInputElement).value).toBe('01/01/2030')
+    expect((wrapper.get('#project-end').element as HTMLInputElement).value).toBe('31/12/2030')
+    expect((wrapper.get('#project-start').element as HTMLInputElement).maxLength).toBe(10)
     expect(wrapper.get('button[type="submit"]').attributes('disabled')).toBeUndefined()
   })
 })
