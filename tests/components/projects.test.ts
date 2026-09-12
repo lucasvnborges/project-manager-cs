@@ -85,6 +85,18 @@ describe('ProjectCard', () => {
     expect(wrapper.emitted('toggleFavorite')?.[0]).toEqual([true])
   })
 
+  it('keeps the filled star fully visible while the request is in flight', async () => {
+    const wrapper = await mountSuspended(ProjectCard, {
+      props: { project: { ...project, isFavorite: true }, favoritePending: true }
+    })
+
+    const button = wrapper.get('button[aria-pressed]')
+
+    expect(button.attributes('disabled')).toBeDefined()
+    expect(button.attributes('aria-busy')).toBe('true')
+    expect(button.classes().join(' ')).not.toContain('opacity-60')
+  })
+
   it('marks the searched term without rendering raw HTML', async () => {
     const wrapper = await mountSuspended(ProjectCard, {
       props: { project: { ...project, name: '<b>Portal</b> Interno' }, highlight: 'portal' }

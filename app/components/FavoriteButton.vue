@@ -15,9 +15,10 @@ const label = computed(() =>
 <template>
   <button
     type="button"
-    class="flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-black/10 disabled:opacity-60"
+    class="flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-black/10 disabled:pointer-events-none"
     :aria-label="label"
     :aria-pressed="isFavorite"
+    :aria-busy="pending ? 'true' : undefined"
     :disabled="pending"
     @click="emit('toggle', !isFavorite)"
   >

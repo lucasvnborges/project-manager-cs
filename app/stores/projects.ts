@@ -70,25 +70,65 @@ export const useProjectsStore = defineStore('projects', () => {
     await fetchList(query)
   }
 
+  function applyFavoriteState(
+    id: string,
+    isFavorite: boolean,
+    query: ProjectListQuery,
+    restore?: Project
+  ): void {
+    const favoritesOnly = query.favorites === true
+
+    if (favoritesOnly && !isFavorite) {
+      items.value = items.value.filter((item) => item.id !== id)
+      filteredTotal.value = Math.max(0, filteredTotal.value - 1)
+      return
+    }
+
+    if (restore && favoritesOnly && isFavorite) {
+      if (!items.value.some((item) => item.id === restore.id)) {
+        items.value = sortProjects(
+          [...items.value, restore],
+          query.sort ?? 'alphabetical',
+          todayCivilDate()
+        )
+        filteredTotal.value += 1
+      }
+
+      return
+    }
+
+    const item = items.value.find((entry) => entry.id === id)
+    if (item) item.isFavorite = isFavorite
+  }
+
   async function setFavorite(
     project: Project,
     isFavorite: boolean,
     query: ProjectListQuery
   ): Promise<void> {
+    if (favoritePendingId.value === project.id) return
+
+    const current = items.value.find((item) => item.id === project.id)
+    if (!current) return
+
+    const snapshot = { ...current }
+
     favoritePendingId.value = project.id
     error.value = null
+    applyFavoriteState(project.id, isFavorite, query)
 
     try {
       await $fetch(`/api/projects/${project.id}/favorite`, {
         method: 'PATCH',
         body: { isFavorite }
       })
-
-      await fetchList(query)
     } catch (requestError) {
+      applyFavoriteState(project.id, snapshot.isFavorite, query, snapshot)
       error.value = apiErrorMessage(requestError)
     } finally {
-      favoritePendingId.value = null
+      if (favoritePendingId.value === project.id) {
+        favoritePendingId.value = null
+      }
     }
   }
 
