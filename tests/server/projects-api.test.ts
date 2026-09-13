@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { ProjectListResponse } from '../../shared/types/project'
 import type { ProjectRow } from '../../server/database/schema'
 
 const db = vi.hoisted(() => ({
@@ -136,7 +137,9 @@ describe('GET /api/projects', () => {
       })
     ])
 
-    const result = await listHandler(createEvent({ query: { sort: 'recent-start' } }))
+    const result: ProjectListResponse = await listHandler(
+      createEvent({ query: { sort: 'recent-start' } })
+    )
 
     expect(result.items.map((item) => item.id)).toEqual([
       '22222222-2222-4222-8222-222222222222',
