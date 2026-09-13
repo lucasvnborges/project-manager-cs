@@ -27,9 +27,9 @@ export function civilDate(value: string): string {
 }
 
 function utcDay(value: string): number {
-  const [year, month, day] = civilDate(value).split('-').map(Number)
+  const [year = 0, month = 1, day = 1] = civilDate(value).split('-').map(Number)
 
-  return Date.UTC(year, (month ?? 1) - 1, day)
+  return Date.UTC(year, month - 1, day)
 }
 
 function distanceFromToday(value: string, today: string): number {
