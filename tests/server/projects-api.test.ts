@@ -193,14 +193,26 @@ describe('POST /api/projects', () => {
     expect(blob.put).not.toHaveBeenCalled()
   })
 
-  it('does not persist invalid values', async () => {
-    const invalid = [{ name: 'name', data: Buffer.from('Iridium') }, ...fields.slice(1)]
+  it('does not persist a project without a title', async () => {
+    const invalid = [{ name: 'name', data: Buffer.from('   ') }, ...fields.slice(1)]
 
     await expect(createHandler(createEvent({ multipart: invalid }))).rejects.toMatchObject({
       statusCode: 400,
-      data: { fieldErrors: { name: 'Por favor, digite ao menos duas palavras' } }
+      data: { fieldErrors: { name: 'Por favor, digite o título do projeto' } }
     })
     expect(db.insertProject).not.toHaveBeenCalled()
+  })
+
+  it('persists a single-word title', async () => {
+    db.insertProject.mockImplementation(async (values: { id: string }) =>
+      row({ id: values.id, name: 'Iridium' })
+    )
+
+    const multipart = [{ name: 'name', data: Buffer.from('Iridium') }, ...fields.slice(1)]
+    const result = await createHandler(createEvent({ multipart }))
+
+    expect(db.insertProject).toHaveBeenCalledOnce()
+    expect(result.name).toBe('Iridium')
   })
 
   it('rejects an unsupported cover type', async () => {
@@ -270,15 +282,15 @@ describe('PATCH /api/projects/:id', () => {
     expect(db.updateProject).not.toHaveBeenCalled()
   })
 
-  it('does not persist invalid values', async () => {
+  it('does not persist a project without a title', async () => {
     db.findProject.mockResolvedValue(row())
-    const invalid = [{ name: 'name', data: Buffer.from('Iridium') }, ...fields.slice(1)]
+    const invalid = [{ name: 'name', data: Buffer.from('   ') }, ...fields.slice(1)]
 
     await expect(
       updateHandler(createEvent({ params: { id: VALID_ID }, multipart: invalid }))
     ).rejects.toMatchObject({
       statusCode: 400,
-      data: { fieldErrors: { name: 'Por favor, digite ao menos duas palavras' } }
+      data: { fieldErrors: { name: 'Por favor, digite o título do projeto' } }
     })
     expect(db.updateProject).not.toHaveBeenCalled()
   })

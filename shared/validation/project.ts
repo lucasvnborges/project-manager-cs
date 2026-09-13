@@ -3,7 +3,7 @@ import type { ProjectFormValues } from '../types/project'
 export type ProjectFieldErrors = Partial<Record<keyof ProjectFormValues, string>>
 
 export const VALIDATION_MESSAGES = {
-  nameRequired: 'Por favor, digite ao menos duas palavras',
+  nameRequired: 'Por favor, digite o título do projeto',
   clientRequired: 'Por favor, digite ao menos uma palavra',
   invalidDate: 'Selecione uma data válida'
 } as const
@@ -83,7 +83,7 @@ export function validateProject(values: ProjectFormValues): ProjectFieldErrors {
   const startValid = isValidCivilDate(values.startDate)
   const endValid = isValidCivilDate(values.endDate)
 
-  if (countWords(values.name) < 2) {
+  if (normalizeText(values.name).length === 0) {
     errors.name = VALIDATION_MESSAGES.nameRequired
   }
 

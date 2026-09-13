@@ -76,10 +76,14 @@ describe('validateProject', () => {
     expect(validateProject(baseValues)).toEqual({})
   })
 
-  it('requires at least two words in the name', () => {
-    const errors = validateProject({ ...baseValues, name: 'Iridium' })
+  it('requires a non-empty title', () => {
+    const errors = validateProject({ ...baseValues, name: '   ' })
 
     expect(errors.name).toBe(VALIDATION_MESSAGES.nameRequired)
+  })
+
+  it('accepts a single-word title', () => {
+    expect(validateProject({ ...baseValues, name: 'Iridium' })).toEqual({})
   })
 
   it('requires a non-empty client', () => {
